@@ -1,0 +1,40 @@
+{
+  "lista": [
+    {
+      "dia": "Segunda-feira",
+      "nome": "Culto de Campanhas",
+      "hora": "19h30",
+      "obs": ""
+    },
+    {
+      "dia": "Quarta-feira",
+      "nome": "Culto do Espírito Santo",
+      "hora": "19h30",
+      "obs": ""
+    },
+    {
+      "dia": "Domingo — Manhã",
+      "nome": "Escola Bíblica Dominical",
+      "hora": "9h00",
+      "obs": "EBD para todas as idades"
+    },
+    {
+      "dia": "Domingo — Noite",
+      "nome": "Culto de Louvor e Adoração",
+      "hora": "19h00",
+      "obs": "1º domingo: Ceia do Senhor · 3º domingo: Culto da Família"
+    },
+    {
+      "dia": "1º Sábado do mês",
+      "nome": "Consagração",
+      "hora": "9h00",
+      "obs": ""
+    },
+    {
+      "dia": "Datas especiais",
+      "nome": "Cultos Especiais",
+      "hora": "Conforme programação",
+      "obs": "Acompanhe nossas redes sociais"
+    }
+  ]
+}
