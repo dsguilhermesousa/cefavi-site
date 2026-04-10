@@ -1,0 +1,36 @@
+backend:
+  name: github
+  repo: dsguilhermesousa/cefavi-site
+  branch: main
+
+media_folder: "images"
+public_folder: "/images"
+
+collections:
+  - name: "sobre"
+    label: "Sobre a Igreja"
+    files:
+      - label: "Texto Sobre"
+        name: "sobre"
+        file: "_data/sobre.json"
+        fields:
+          - { label: "Parágrafo 1", name: "paragrafo1", widget: "text" }
+          - { label: "Parágrafo 2", name: "paragrafo2", widget: "text" }
+          - { label: "Parágrafo 3", name: "paragrafo3", widget: "text" }
+          - { label: "Ano de fundação", name: "fundacao", widget: "string" }
+
+  - name: "cultos"
+    label: "Cultos"
+    files:
+      - label: "Programação de Cultos"
+        name: "cultos"
+        file: "_data/cultos.json"
+        fields:
+          - label: "Cultos"
+            name: "lista"
+            widget: "list"
+            fields:
+              - { label: "Dia", name: "dia", widget: "string" }
+              - { label: "Nome do Culto", name: "nome", widget: "string" }
+              - { label: "Horário", name: "hora", widget: "string" }
+              - { label: "Observação (opcional)", name: "obs", widget: "string", required: false }
