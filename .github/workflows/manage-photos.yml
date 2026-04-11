@@ -1,0 +1,59 @@
+name: Gerenciar Fotos da Galeria
+
+on:
+  push:
+    paths:
+      - 'images/galeria/**'
+
+jobs:
+  manage-photos:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repositório
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Gerenciar limite de fotos
+        run: |
+          MAX_PHOTOS=11
+          GALLERY_DIR="images/galeria"
+
+          # Lista fotos ordenadas por data de commit (mais antiga primeiro)
+          FILES=$(git log --diff-filter=A --name-only --pretty=format: -- "$GALLERY_DIR" | grep -E "\.(jpg|jpeg|png|webp|JPG|JPEG|PNG|WEBP)$" | awk '!seen[$0]++')
+
+          # Conta quantas fotos existem atualmente
+          CURRENT_COUNT=$(ls "$GALLERY_DIR" 2>/dev/null | grep -cE "\.(jpg|jpeg|png|webp|JPG|JPEG|PNG|WEBP)$" || echo 0)
+
+          echo "Fotos atuais: $CURRENT_COUNT / Máximo: $MAX_PHOTOS"
+
+          if [ "$CURRENT_COUNT" -le "$MAX_PHOTOS" ]; then
+            echo "Dentro do limite. Nenhuma foto deletada."
+            exit 0
+          fi
+
+          # Calcula quantas fotos deletar
+          TO_DELETE=$((CURRENT_COUNT - MAX_PHOTOS))
+          echo "Deletando $TO_DELETE foto(s) mais antiga(s)..."
+
+          # Pega as fotos mais antigas pelo histórico do git
+          OLDEST=$(git log --diff-filter=A --name-only --pretty=format: -- "$GALLERY_DIR" \
+            | grep -E "\.(jpg|jpeg|png|webp|JPG|JPEG|PNG|WEBP)$" \
+            | awk '!seen[$0]++' \
+            | tail -n "$TO_DELETE")
+
+          for FILE in $OLDEST; do
+            if [ -f "$FILE" ]; then
+              echo "Deletando: $FILE"
+              git rm "$FILE"
+            fi
+          done
+
+          # Commit das deleções
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "Auto: remove fotos antigas para manter limite de $MAX_PHOTOS"
+          git push
