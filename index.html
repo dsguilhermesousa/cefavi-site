@@ -456,6 +456,22 @@
     <p>🔴 Estamos ao vivo agora! <a href="#aovivo">Clique aqui para assistir</a></p>
   </div>
 
+
+  <!-- PARALLAX 1 — entre Hero e Sobre -->
+  <div class="parallax-divider" id="parallax1">
+    <div class="parallax-photo" id="parallax1-photo"></div>
+    <div class="parallax-overlay"></div>
+    <div class="parallax-verse">
+      <blockquote id="p1-verse-text">"Louvai ao Senhor, porque ele é bom; o seu amor dura para sempre."</blockquote>
+      <cite id="p1-verse-ref">Salmos 107:1</cite>
+    </div>
+    <div class="parallax-fallback" id="parallax1-fallback" style="display:none;">
+      <blockquote id="p1-fallback-text">"Louvai ao Senhor, porque ele é bom; o seu amor dura para sempre."</blockquote>
+      <cite id="p1-fallback-ref">Salmos 107:1</cite>
+    </div>
+    <div class="parallax-desktop-grid" id="parallax1-grid"></div>
+  </div>
+
   <section id="sobre">
     <div class="section-inner">
       <div class="section-tag reveal">Quem somos</div>
@@ -500,19 +516,19 @@
   </section>
 
 
-  <!-- PARALLAX 1 — entre Cultos e Ao Vivo -->
-  <div class="parallax-divider" id="parallax1">
-    <div class="parallax-photo" id="parallax1-photo"></div>
+  <!-- PARALLAX 2 — entre Cultos e Ao Vivo -->
+  <div class="parallax-divider" id="parallax2">
+    <div class="parallax-photo" id="parallax2-photo"></div>
     <div class="parallax-overlay"></div>
     <div class="parallax-verse">
-      <blockquote>"Louvai ao Senhor, porque ele é bom; o seu amor dura para sempre."</blockquote>
-      <cite>Salmos 107:1</cite>
+      <blockquote id="p2-verse-text">"Onde dois ou três estiverem reunidos em meu nome, ali estou no meio deles."</blockquote>
+      <cite id="p2-verse-ref">Mateus 18:20</cite>
     </div>
-    <div class="parallax-fallback" id="parallax1-fallback" style="display:none;">
-      <blockquote>"Louvai ao Senhor, porque ele é bom; o seu amor dura para sempre."</blockquote>
-      <cite>Salmos 107:1</cite>
+    <div class="parallax-fallback" id="parallax2-fallback" style="display:none;">
+      <blockquote id="p2-fallback-text">"Onde dois ou três estiverem reunidos em meu nome, ali estou no meio deles."</blockquote>
+      <cite id="p2-fallback-ref">Mateus 18:20</cite>
     </div>
-    <div class="parallax-desktop-grid" id="parallax1-grid"></div>
+    <div class="parallax-desktop-grid" id="parallax2-grid"></div>
   </div>
 
   <section id="aovivo">
@@ -554,21 +570,6 @@
       </a>
     </div>
   </section>
-
-  <!-- PARALLAX 2 — entre Galeria e Contribua -->
-  <div class="parallax-divider" id="parallax2">
-    <div class="parallax-photo" id="parallax2-photo"></div>
-    <div class="parallax-overlay"></div>
-    <div class="parallax-verse">
-      <blockquote>"Onde dois ou três estiverem reunidos em meu nome, ali estou no meio deles."</blockquote>
-      <cite>Mateus 18:20</cite>
-    </div>
-    <div class="parallax-fallback" id="parallax2-fallback" style="display:none;">
-      <blockquote>"Onde dois ou três estiverem reunidos em meu nome, ali estou no meio deles."</blockquote>
-      <cite>Mateus 18:20</cite>
-    </div>
-    <div class="parallax-desktop-grid" id="parallax2-grid"></div>
-  </div>
 
   <section id="contribua">
     <div class="section-inner">
@@ -751,7 +752,33 @@
             <a href="#cultos" class="btn-primary" style="margin-top:1rem;">Venha nos visitar</a>
           `;
           if (sobre.fundacao) document.getElementById('stat-fundacao').textContent = sobre.fundacao;
+        // Versículos
+      try {
+        const versRes = await fetch('/_data/versiculos.json');
+        if (versRes.ok) {
+          const vers = await versRes.json();
+          // Parallax 1
+          const p1t = document.getElementById('p1-verse-text');
+          const p1r = document.getElementById('p1-verse-ref');
+          const p1ft = document.getElementById('p1-fallback-text');
+          const p1fr = document.getElementById('p1-fallback-ref');
+          if (p1t) p1t.textContent = `"${vers.versiculo1.texto}"`;
+          if (p1r) p1r.textContent = vers.versiculo1.referencia;
+          if (p1ft) p1ft.textContent = `"${vers.versiculo1.texto}"`;
+          if (p1fr) p1fr.textContent = vers.versiculo1.referencia;
+          // Parallax 2
+          const p2t = document.getElementById('p2-verse-text');
+          const p2r = document.getElementById('p2-verse-ref');
+          const p2ft = document.getElementById('p2-fallback-text');
+          const p2fr = document.getElementById('p2-fallback-ref');
+          if (p2t) p2t.textContent = `"${vers.versiculo2.texto}"`;
+          if (p2r) p2r.textContent = vers.versiculo2.referencia;
+          if (p2ft) p2ft.textContent = `"${vers.versiculo2.texto}"`;
+          if (p2fr) p2fr.textContent = vers.versiculo2.referencia;
         }
+      } catch(e) { /* mantém versículos padrão do HTML */ }
+
+      }
       } catch(e) {
         // fallback estático
         document.getElementById('sobre-text').innerHTML = `
@@ -823,9 +850,9 @@
     const GITHUB_USER = 'dsguilhermesousa';
     const GITHUB_REPO = 'cefavi-site';
     const GALLERY_PATH = 'images/galeria';
-    const MAX_GALLERY = 9;   // fotos na galeria
-    const MAX_PARALLAX = 2;  // fotos nos parallax (1 por divider)
-    const TOTAL_PHOTOS = MAX_GALLERY + MAX_PARALLAX; // 11 total
+    const MAX_GALLERY = 9;    // fotos na galeria (grid 3x3)
+    const MAX_PARALLAX_DESKTOP = 3; // miniaturas por parallax no desktop
+    const TOTAL_PHOTOS = MAX_GALLERY + (MAX_PARALLAX_DESKTOP * 2); // 15 total
 
     async function loadGallery() {
       try {
@@ -858,9 +885,13 @@
         // a ordem retornada pela API que é alfabética por nome
         // Para ordenação por data precisaria de outra chamada — mantemos simples
 
-        // Pega as primeiras 2 para parallax (mais antigas = primeiras na lista)
-        const parallaxPhotos = images.slice(0, MAX_PARALLAX);
-        // Pega as próximas 9 para galeria (mais recentes = últimas na lista)
+        // Distribui fotos:
+        // 3 primeiras → parallax 1 (desktop)
+        // 3 seguintes → parallax 2 (desktop)
+        // mobile: usa 1a foto de cada parallax
+        // 9 últimas → galeria
+        const p1Photos = images.slice(0, 3);
+        const p2Photos = images.slice(3, 6);
         const galleryPhotos = images.slice(-MAX_GALLERY);
 
         // Monta galeria
@@ -885,10 +916,10 @@
         }
 
         // Monta parallax 1
-        buildParallax('parallax1', parallaxPhotos[0]);
+        buildParallax('parallax1', p1Photos);
 
         // Monta parallax 2
-        buildParallax('parallax2', parallaxPhotos[1] || parallaxPhotos[0]);
+        buildParallax('parallax2', p2Photos.length ? p2Photos : p1Photos);
 
       } catch(e) {
         showGalleryPlaceholders();
@@ -896,39 +927,35 @@
       }
     }
 
-    function buildParallax(id, photoData) {
+    function buildParallax(id, photos) {
       const photoEl = document.getElementById(`${id}-photo`);
       const gridEl = document.getElementById(`${id}-grid`);
       const fallbackEl = document.getElementById(`${id}-fallback`);
 
-      if (!photoData) {
+      if (!photos || photos.length === 0) {
         if (photoEl) photoEl.style.display = 'none';
         if (fallbackEl) fallbackEl.style.display = 'flex';
         return;
       }
 
-      const url = photoData.download_url;
-
-      // Mobile: foto de fundo
+      // Mobile: primeira foto como fundo
+      const url = photos[0].download_url;
       if (photoEl) {
         photoEl.style.backgroundImage = `url('${url}')`;
         photoEl.style.display = 'block';
       }
       if (fallbackEl) fallbackEl.style.display = 'none';
 
-      // Desktop: 3 miniaturas usando fotos da galeria
+      // Desktop: até 3 miniaturas dedicadas
       if (gridEl) {
         gridEl.innerHTML = '';
-        // Pega até 3 fotos aleatórias da galeria para os thumbs
-        const allImages = Array.from(document.querySelectorAll('.galeria-item img'));
-        const thumbUrls = allImages.length >= 3
-          ? [allImages[0].src, allImages[Math.floor(allImages.length/2)].src, allImages[allImages.length-1].src]
-          : [url, url, url];
-
-        thumbUrls.forEach(thumbUrl => {
+        const thumbs = photos.slice(0, 3);
+        // Se tiver menos de 3, repete a última
+        while (thumbs.length < 3) thumbs.push(thumbs[thumbs.length - 1]);
+        thumbs.forEach(photo => {
           const thumb = document.createElement('div');
           thumb.className = 'thumb';
-          thumb.style.backgroundImage = `url('${thumbUrl}')`;
+          thumb.style.backgroundImage = `url('${photo.download_url}')`;
           gridEl.appendChild(thumb);
         });
       }
