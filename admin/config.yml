@@ -5,8 +5,8 @@ backend:
   base_url: https://cefavi.com.br
   auth_endpoint: /api/auth
 
-media_folder: "images"
-public_folder: "/images"
+media_folder: "images/galeria"
+public_folder: "/images/galeria"
 
 collections:
   - name: "sobre"
@@ -36,3 +36,23 @@ collections:
               - { label: "Nome do Culto", name: "nome", widget: "string" }
               - { label: "Horário", name: "hora", widget: "string" }
               - { label: "Observação (opcional)", name: "obs", widget: "string", required: false }
+
+  - name: "versiculos"
+    label: "Versículos das Fotos"
+    files:
+      - label: "Versículos"
+        name: "versiculos"
+        file: "_data/versiculos.json"
+        fields:
+          - label: "Versículo 1 (primeira foto)"
+            name: "versiculo1"
+            widget: "object"
+            fields:
+              - { label: "Texto do versículo", name: "texto", widget: "text" }
+              - { label: "Referência (ex: Salmos 107:1)", name: "referencia", widget: "string" }
+          - label: "Versículo 2 (segunda foto)"
+            name: "versiculo2"
+            widget: "object"
+            fields:
+              - { label: "Texto do versículo", name: "texto", widget: "text" }
+              - { label: "Referência (ex: Mateus 18:20)", name: "referencia", widget: "string" }
