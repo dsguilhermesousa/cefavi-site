@@ -315,6 +315,42 @@
       font-style: italic; line-height: 1.7;
     }
 
+
+    /* ── BANNER EVENTO ── */
+    #banner-evento {
+      display: none; /* controlado via JS */
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      background: var(--dark3);
+    }
+    #banner-evento img {
+      width: 100%;
+      max-height: 500px;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+    #banner-evento:hover img { transform: scale(1.02); }
+    #banner-evento .evento-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    #banner-evento .evento-badge {
+      position: absolute;
+      top: 1.5rem; left: 1.5rem;
+      background: var(--green);
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 0.4rem 1rem;
+      border-radius: 2px;
+    }
+
     /* ── PARALLAX DIVIDER ── */
     .parallax-divider { position: relative; height: 340px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
     .parallax-photo { position: absolute; inset: 0; background-size: cover; background-position: center; transition: background-image 0.8s ease; }
@@ -456,6 +492,14 @@
     <p>🔴 Estamos ao vivo agora! <a href="#aovivo">Clique aqui para assistir</a></p>
   </div>
 
+
+
+  <!-- BANNER EVENTO — aparece só quando tiver evento ativo -->
+  <div id="banner-evento">
+    <span class="evento-badge">Evento especial</span>
+    <img id="evento-img" src="" alt="Evento CEFAVI" />
+    <div class="evento-overlay"></div>
+  </div>
 
   <!-- PARALLAX 1 — entre Hero e Sobre -->
   <div class="parallax-divider" id="parallax1">
@@ -644,10 +688,10 @@
               <span>Segunda e Quarta: 19h30<br>Domingo Manhã: 9h00<br>Domingo Noite: 19h00<br>1º Sáb. do mês: 9h00</span>
             </div>
           </div>
-          <a href="https://maps.app.goo.gl/ppcC7Kps9QQKHS5Y8" target="_blank" rel="noopener" class="btn-primary">Abrir no Google Maps</a>
+          <a href="https://maps.app.goo.gl/MjTKbfMtqfSE9Frn6" target="_blank" rel="noopener" class="btn-primary">Abrir no Google Maps</a>
         </div>
         <div class="map-embed reveal reveal-delay-3">
-          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3679.860921496728!2d-43.3185510238938!3d-22.733410179377568!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x997031c6a63c81%3A0xa433c104a753708a!2sCEFAVI%20-%20Comunidade%20Evang%C3%A9lica%20Falando%20De%20Vida!5e0!3m2!1spt-BR!2sbr!4v1775964034812!5m2!1spt-BR!2sbr"></iframe>
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3675.5!2d-43.311!3d-22.785!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjLCsDQ3JzA2LjAiUyA0M8KwMTgnMzkuNiJX!5e0!3m2!1spt-BR!2sbr!4v1" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
         </div>
       </div>
     </div>
@@ -844,6 +888,48 @@
 
     checkYoutubeLive();
     setInterval(checkYoutubeLive, 3 * 60 * 1000);
+
+
+    // ── BANNER EVENTO ──
+    const GITHUB_USER_EV = 'dsguilhermesousa';
+    const GITHUB_REPO_EV = 'cefavi-site';
+    const EVENTS_PATH = 'images/eventos';
+
+    async function loadEvento() {
+      try {
+        const res = await fetch(
+          `https://api.github.com/repos/${GITHUB_USER_EV}/${GITHUB_REPO_EV}/contents/${EVENTS_PATH}`
+        );
+        if (!res.ok) return;
+
+        const files = await res.json();
+        const today = new Date().toISOString().split('T')[0]; // AAAA-MM-DD
+
+        // Filtra imagens com data válida no nome e que ainda não expiraram
+        const active = files.filter(f => {
+          const match = f.name.match(/^(\d{4}-\d{2}-\d{2})\./);
+          if (!match) return false;
+          return match[1] > today; // data de expiração é estritamente futura
+        });
+
+        if (active.length === 0) return;
+
+        // Pega o evento com data de expiração mais próxima
+        active.sort((a, b) => a.name.localeCompare(b.name));
+        const evento = active[0];
+
+        // Exibe o banner
+        const banner = document.getElementById('banner-evento');
+        const img = document.getElementById('evento-img');
+        if (banner && img) {
+          img.src = evento.download_url;
+          img.onload = () => { banner.style.display = 'block'; };
+        }
+
+      } catch(e) { /* silencioso — banner simplesmente não aparece */ }
+    }
+
+    loadEvento();
 
     // ── GALERIA E PARALLAX ──
     // Configuração
