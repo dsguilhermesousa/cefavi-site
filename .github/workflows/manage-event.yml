@@ -1,0 +1,67 @@
+name: Gerenciar Evento
+
+on:
+  push:
+    paths:
+      - 'images/eventos/**'
+  schedule:
+    - cron: '0 3 * * *'  # Todo dia às 00h de Brasília (03h UTC)
+
+jobs:
+  manage-event:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repositório
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verificar e limpar eventos expirados
+        run: |
+          EVENTS_DIR="images/eventos"
+          TODAY=$(date -u +%Y-%m-%d)
+
+          echo "Data de hoje: $TODAY"
+
+          # Lista arquivos de imagem na pasta de eventos
+          FILES=$(find "$EVENTS_DIR" -maxdepth 1 -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.webp" \) 2>/dev/null)
+
+          if [ -z "$FILES" ]; then
+            echo "Nenhum arquivo de evento encontrado."
+            exit 0
+          fi
+
+          DELETED=0
+          for FILE in $FILES; do
+            BASENAME=$(basename "$FILE")
+            # Extrai a data do nome (formato AAAA-MM-DD)
+            DATE_PART=$(echo "$BASENAME" | grep -oE '^[0-9]{4}-[0-9]{2}-[0-9]{2}')
+
+            if [ -z "$DATE_PART" ]; then
+              echo "⚠️  Arquivo '$BASENAME' não tem data válida no nome. Ignorando."
+              continue
+            fi
+
+            echo "Arquivo: $BASENAME | Data de expiração: $DATE_PART | Hoje: $TODAY"
+
+            # Compara datas: se a data do arquivo <= hoje, deleta
+            if [[ "$DATE_PART" < "$TODAY" ]] || [[ "$DATE_PART" == "$TODAY" ]]; then
+              echo "🗑️  Evento expirado! Deletando: $FILE"
+              git rm "$FILE"
+              DELETED=$((DELETED + 1))
+            else
+              echo "✅ Evento ativo até $DATE_PART"
+            fi
+          done
+
+          if [ "$DELETED" -gt 0 ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git commit -m "Auto: remove $DELETED evento(s) expirado(s)"
+            git push
+          else
+            echo "Nenhum evento expirado para remover."
+          fi
