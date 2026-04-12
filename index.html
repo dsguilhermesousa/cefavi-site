@@ -318,23 +318,38 @@
 
     /* ── BANNER EVENTO ── */
     #banner-evento {
-      display: none; /* controlado via JS */
+      display: none;
       position: relative;
       overflow: hidden;
       cursor: pointer;
       background: var(--dark3);
     }
+    /* Mobile: imagem ocupa largura total */
     #banner-evento img {
       width: 100%;
-      max-height: 500px;
-      object-fit: cover;
       display: block;
       transition: transform 0.5s ease;
+      object-fit: contain;
     }
-    #banner-evento:hover img { transform: scale(1.02); }
+    /* Desktop: centraliza a arte com fundo escuro nas laterais */
+    @media (min-width: 769px) {
+      #banner-evento {
+        display: none;
+        background: #0a0e0a;
+        text-align: center;
+      }
+      #banner-evento img {
+        max-height: 520px;
+        width: auto;
+        max-width: 100%;
+        margin: 0 auto;
+        object-fit: contain;
+      }
+      #banner-evento:hover img { transform: scale(1.02); }
+    }
     #banner-evento .evento-overlay {
       position: absolute; inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 60%);
+      background: linear-gradient(to top, rgba(0,0,0,0.3) 0%, transparent 50%);
       pointer-events: none;
     }
     #banner-evento .evento-badge {
@@ -349,6 +364,7 @@
       text-transform: uppercase;
       padding: 0.4rem 1rem;
       border-radius: 2px;
+      z-index: 2;
     }
 
     /* ── PARALLAX DIVIDER ── */
