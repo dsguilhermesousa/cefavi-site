@@ -119,8 +119,10 @@
       background: rgba(8,10,8,0.98);
       border-left: 1px solid rgba(45,138,78,0.2);
       padding: 6rem 2rem 2rem;
+      padding-bottom: env(safe-area-inset-bottom, 2rem);
       transition: right 0.35s cubic-bezier(0.4,0,0.2,1);
       flex-direction: column; gap: 0;
+      overflow-y: auto;
     }
     .mobile-drawer.open { right: 0; }
     .mobile-drawer a {
